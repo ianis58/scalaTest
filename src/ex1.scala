@@ -3,27 +3,29 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object ex1 extends App
 {
-  val conf = new SparkConf().setAppName("Exo1").setMaster("local[*]")
-  val sc = new SparkContext(conf)
-
   def jsonCreaturesToSpells(): Unit = {
-    val sparkSession = SparkSession.builder().config(conf).getOrCreate()
+    val conf = new SparkConf().setAppName("Exo1").setMaster("local[*]")
+    val sc = new SparkContext(conf)
+    val sparkSession = SparkSession
+      .builder()
+      .config(conf)
+      .getOrCreate()
 
     val dataFrame = sparkSession.read.json("creatures.json").rdd
 
     val list = dataFrame.flatMap(
-      row => row.getSeq[String](1).map()
+      row => row.getSeq[String](1)
+                .map( part => (part, row.getString(0)) )
     )
+
+    val reducedByKey = list.reduceByKey(_+ " | " +_)
+
+    reducedByKey.collect.foreach(println)
 
   }
 
-  val sparkSession = new org.apache.spark.sql.SQLContext(sc)
+  override def main(args: Array[String]): Unit = {
+    jsonCreaturesToSpells()
+  }
 
-  val df = sqlContext.read.json("creatures.json").rdd
-
-  val stringRDD = df
-
-  sqlContext.jsonRDD(stringRDD).registerTempTable("testjson")
-
-  val dataframe = sqlContext.read.json()
 }

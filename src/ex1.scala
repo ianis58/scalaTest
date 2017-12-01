@@ -22,6 +22,8 @@ object ex1 extends App
 
     reducedByKey.collect.foreach(println)
 
+    reducedByKey.saveAsTextFile("spells")
+
   }
 
   override def main(args: Array[String]): Unit = {

@@ -102,7 +102,7 @@ class Combat extends Serializable {
 
   def getCloser(creature : Creature): Int ={ //fonction pour faire avancer les créatures
     var newDist = creature.dist
-    System.out.println("getCloser called on " + creature.toString)
+
     if(newDist > 10){
       if(creature.dist - creature.speed <= 5){
         newDist = 5
